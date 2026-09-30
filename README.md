@@ -10,15 +10,18 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/isntaname/isoundboard/actions/workflows/ci.yml"><img src="https://github.com/isntaname/isoundboard/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://github.com/isntaname/isoundboard/releases/latest"><img src="https://img.shields.io/github/v/release/isntaname/isoundboard" alt="Latest release"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/isntaname/isoundboard" alt="License: GPL-3.0"></a>
+  <a href="https://github.com/isntaname/isoundboard/releases/latest"><img src="docs/images/download.png" width="260" alt="Download for Mac"></a>
+  <br>
+  <sub>macOS 14 or later &nbsp;·&nbsp; Apple silicon and Intel</sub>
 </p>
 
 <p align="center">
-  <a href="https://github.com/isntaname/isoundboard/releases/latest"><b>Download</b></a>
-  &nbsp;·&nbsp; macOS 14 or later &nbsp;·&nbsp; Apple silicon and Intel
+  <a href="https://github.com/isntaname/isoundboard/actions/workflows/ci.yml"><img src="https://github.com/isntaname/isoundboard/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/isntaname/isoundboard/releases/latest"><img src="https://img.shields.io/github/v/release/isntaname/isoundboard?color=F5A623&labelColor=333336" alt="Latest release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/isntaname/isoundboard?color=333336&labelColor=333336" alt="License: GPL-3.0"></a>
 </p>
+
+<br>
 
 <p align="center">
   <picture>
@@ -30,31 +33,38 @@
 ## How it works
 
 Games record from one microphone. iSoundboard mixes your real microphone and
-your clips into a virtual one, and the game records from that:
+your clips into a virtual one, and the game records from that.
 
-```
-your microphone ──┐
-                  ├──▶ iSoundboard ──▶ iSoundboard driver ──▶ game voice chat
-sound clips ──────┘
-```
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/signal-flow-dark.png">
+    <img src="docs/images/signal-flow-light.png" width="840" alt="Your microphone and sound clips go into iSoundboard, which plays into the iSoundboard driver, a virtual microphone. Game voice chat records from the driver.">
+  </picture>
+</p>
 
 Each clip gets a hotkey that works while the game is focused. The game still
 receives the key, so a hotkey never swallows an in-game action.
 
 ## Install
 
-**1. Download iSoundboard** from
+### 1. Download
+
+Get iSoundboard from
 [Releases](https://github.com/isntaname/isoundboard/releases/latest), open the
 `.dmg` and drag iSoundboard to Applications.
 
-**2. Open it, then allow it.** Releases aren't notarized by Apple yet, so on
-first launch macOS says it can't verify the app. Click **Done**, then open
+### 2. Open it, then allow it
+
+Releases aren't notarized by Apple yet, so on first launch macOS says it can't
+verify the app. Click **Done**, then open
 **System Settings → Privacy & Security**, scroll down, click **Open Anyway**
 and confirm.
 
-**3. Click Install Audio Driver** and enter your Mac password. The driver is
-the virtual microphone your game records from. Sound cuts out for a second
-while macOS loads it.
+### 3. Install Audio Driver
+
+Click **Install Audio Driver** and enter your Mac password. The driver is the
+virtual microphone your game records from. Sound cuts out for a second while
+macOS loads it.
 
 <details>
 <summary><b>About the audio driver: what it is and what installing it does</b></summary>
@@ -116,72 +126,89 @@ macOS version.
 
 </details>
 
-**4. Grant permissions.** iSoundboard opens on its Settings tab and lists what
-it's missing.
+### 4. Grant permissions
+
+iSoundboard opens on its Settings tab and lists what it's missing.
 
 | Permission | What it's for | How |
-|---|---|---|
-| Microphone | Mixing your voice into the virtual mic | Allow the prompt |
-| Input Monitoring | Hearing your hotkeys while a game is focused | No prompt. In System Settings click **+**, choose iSoundboard, then relaunch |
-| Accessibility | Pressing the game's push-to-talk key for you | Allow the prompt |
+|:--|:--|:--|
+| **Microphone** | Mixing your voice into the virtual mic | Allow the prompt |
+| **Input Monitoring** | Hearing your hotkeys while a game is focused | No prompt. In System Settings click **+**, choose iSoundboard, then relaunch |
+| **Accessibility** | Pressing the game's push-to-talk key for you | Allow the prompt |
 
 Microphone access is optional if you set **Your voice** to Muted. Accessibility
-is only needed for push-to-talk emulation.
+is only needed for Push-to-talk emulation.
 
 ## Use
 
-**Add sounds** by clicking the dashed pad or dropping audio files onto the
-board. Any format macOS can play works: MP3, WAV, AIFF, M4A, FLAC.
+**Add sounds.** Click the dashed pad or drop audio files onto the board. Any
+format macOS can play works: MP3, WAV, AIFF, M4A, FLAC.
 
-**Set a hotkey** by clicking a pad's key and pressing a key or mouse button,
-with or without modifiers. Press Esc to clear it. Pick keys the game doesn't
-use.
+**Set a hotkey.** Click a pad's key and press a key or mouse button, with or
+without modifiers. <kbd>Esc</kbd> clears it. Pick keys the game doesn't use.
 
-**Stop** a clip with the stop key, the Stop button or ⌘. (Command-period).
-Starting another clip also stops the current one, since only one plays at a
-time.
+**Stop.** Use the stop key, the Stop button or <kbd>⌘</kbd>&thinsp;<kbd>.</kbd>
+(Command-period). Only one clip plays at a time, so starting another also stops
+the current one.
 
-**In the game**, nothing to change. iSoundboard makes its driver the system
+**In the game,** nothing to change. iSoundboard makes its driver the system
 microphone while it runs and switches back to your own microphone when you
 quit. If the game has its own input picker, choose iSoundboard there.
+
+### Settings
 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/images/settings-dark.png">
-    <img src="docs/images/settings-light.png" width="520" alt="The Settings tab: microphone, what the game hears, what you hear, push-to-talk emulation and permissions.">
+    <img src="docs/images/settings-light.png" width="440" alt="The Settings tab: microphone, what the game hears, what you hear, push-to-talk emulation and permissions.">
   </picture>
 </p>
 
-### Settings
-
-- **Your voice.** *Always mixed in* keeps your mic live under the clips.
-  *Muted while a clip plays* cuts your mic for the length of each clip.
-  *Muted* sends only clips.
-- **Hear clips yourself.** Plays clips to your own speakers or headphones too.
-  This volume doesn't change what the game hears.
-- **Push-to-talk emulation.** If the game uses push-to-talk, a clip is silent
-  unless the key is held. With emulation on, iSoundboard holds the game's
-  push-to-talk key for as long as the clip plays. Set the key to the one the
-  game uses.
+| Setting | What it does |
+|:--|:--|
+| **Your voice** | *Always mixed in* keeps your mic live under the clips.<br>*Muted while a clip plays* cuts your mic for the length of each clip.<br>*Muted* sends only clips. |
+| **Hear clips yourself** | Plays clips to your own speakers or headphones too. This volume doesn't change what the game hears. |
+| **Push-to-talk emulation** | If the game uses push-to-talk, a clip is silent unless the key is held. With emulation on, iSoundboard holds the game's push-to-talk key for as long as the clip plays. Set the key to the one the game uses. |
 
 ## Troubleshooting
 
-**Hotkeys stopped working after an update.** macOS ties Input Monitoring to
-the exact build. In System Settings → Privacy & Security → Input Monitoring,
-remove iSoundboard with **−**, add it again with **+**, and relaunch.
+<details>
+<summary><b>Hotkeys stopped working after an update</b></summary>
+<br>
 
-**Teammates don't hear anything.** Check that the status at the top of the
-window says *Live on iSoundboard*, and that the game's voice input is the
-system default or iSoundboard.
+macOS ties Input Monitoring to the exact build. In
+**System Settings → Privacy & Security → Input Monitoring**, remove
+iSoundboard with **−**, add it again with **+**, and relaunch.
 
-**The game ignores push-to-talk emulation.** Some games ignore generated key
-presses. Turn emulation off, bind the clip to your push-to-talk key itself, and
-hold the key until the clip ends.
+</details>
 
-**Clips sound muffled with Bluetooth headphones.** A Bluetooth headset's
-microphone drops the whole chain, clips included, to 16 kHz. iSoundboard warns
-when this happens. Use your Mac's built-in microphone and keep the headset for
-listening.
+<details>
+<summary><b>Teammates don't hear anything</b></summary>
+<br>
+
+Check that the status at the top of the window says *Live on iSoundboard*, and
+that the game's voice input is the system default or iSoundboard.
+
+</details>
+
+<details>
+<summary><b>The game ignores Push-to-talk emulation</b></summary>
+<br>
+
+Some games ignore generated key presses. Turn emulation off, bind the clip to
+your push-to-talk key itself, and hold the key until the clip ends.
+
+</details>
+
+<details>
+<summary><b>Clips sound muffled with Bluetooth headphones</b></summary>
+<br>
+
+A Bluetooth headset's microphone drops the whole chain, clips included, to
+16 kHz. iSoundboard warns when this happens. Use your Mac's built-in
+microphone and keep the headset for listening.
+
+</details>
 
 **Uninstalling.** Click **Uninstall Audio Driver** in Settings, then move
 iSoundboard to the Bin.
