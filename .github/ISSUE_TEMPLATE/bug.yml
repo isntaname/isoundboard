@@ -1,0 +1,29 @@
+name: Bug report
+description: Something doesn't work as described.
+body:
+  - type: textarea
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: macOS version
+      placeholder: "26.4"
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Soundboard version
+      placeholder: "1.0.0, or a commit if built from source"
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Game or voice app
+      placeholder: "Dota 2, Discord…"
+  - type: input
+    attributes:
+      label: Microphone and headphones
+      placeholder: "Built-in mic, AirPods Pro"

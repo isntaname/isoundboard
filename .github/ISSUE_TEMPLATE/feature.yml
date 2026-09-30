@@ -1,0 +1,9 @@
+name: Feature request
+description: Something iSoundboard should do.
+body:
+  - type: textarea
+    attributes:
+      label: What you want to do
+      description: The situation and what gets in the way today.
+    validations:
+      required: true
