@@ -12,6 +12,10 @@ The build is universal (Apple silicon and Intel).
 Building needs full Xcode, not just the command line tools: the driver is an
 Xcode project.
 
+After publishing, run **Clean-machine install test** from the Actions tab. It
+installs the release on a fresh Mac the way a user gets it and checks that the
+driver loads and carries audio.
+
 The app is signed with whatever certificate `build-app.sh` finds. That keeps
 permission grants stable across updates, but Gatekeeper accepts neither an
 Apple Development signature nor an ad-hoc one. Users have to click

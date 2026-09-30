@@ -131,6 +131,14 @@ case "verify":
                        args.indices.contains($0 + 1) ? args[$0 + 1] : nil
                    })
 
+case "install-command":
+    // Prints the exact root command the app's Install button runs, for the
+    // clean-machine CI test: install-command <path to iSoundboard.driver> [team id]
+    guard args.count > 2 else { print("usage: soundboardctl install-command <driver> [team]"); exit(1) }
+    print(DriverInstaller.installCommand(
+        bundled: URL(fileURLWithPath: args[2]),
+        requirement: DriverInstaller.requirement(teamID: args.count > 3 ? args[3] : nil)))
+
 case "claim":
     try Verify.runClaim(virtualName: args.count > 2 ? args[2] : "BlackHole 2ch")
 

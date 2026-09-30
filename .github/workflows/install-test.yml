@@ -1,0 +1,63 @@
+name: Clean-machine install test
+
+# Installs a published release on a fresh Mac, the way a user would get it:
+# downloaded (quarantined) DMG, app copied to Applications, then the driver
+# installed with the same command the app's Install Audio Driver button runs.
+# Run it from the Actions tab after publishing a release.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to test (empty for the latest)
+        required: false
+
+jobs:
+  install:
+    runs-on: macos-26
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Download the release like a browser would
+        run: |
+          gh release download ${{ inputs.tag }} --pattern '*.dmg' --dir dl
+          DMG=$(ls dl/*.dmg)
+          # Browsers mark downloads; curl and gh don't, so mark it here.
+          xattr -w com.apple.quarantine "0083;$(printf %x "$(date +%s)");Safari;$(uuidgen)" "$DMG"
+          echo "DMG=$DMG" >> "$GITHUB_ENV"
+
+      - name: Copy the app to Applications
+        run: |
+          hdiutil attach -nobrowse -mountpoint /tmp/isb "$DMG"
+          ditto /tmp/isb/iSoundboard.app /Applications/iSoundboard.app
+          hdiutil detach /tmp/isb
+          # Worst case: every file in the app still marked as downloaded.
+          xattr -r -w com.apple.quarantine "0083;$(printf %x "$(date +%s)");Safari;$(uuidgen)" /Applications/iSoundboard.app
+          codesign -dv /Applications/iSoundboard.app 2>&1 | grep -E 'Identifier|TeamIdentifier'
+
+      - name: Install the driver with the app's own command
+        run: |
+          APP=/Applications/iSoundboard.app
+          TEAM=$(codesign -dv "$APP" 2>&1 | sed -n 's/^TeamIdentifier=//p' | grep -v 'not set' || true)
+          COMMAND=$(swift run -c release soundboardctl install-command "$APP/Contents/Library/Driver/iSoundboard.driver" $TEAM | tail -1)
+          echo "$COMMAND"
+          sudo sh -c "$COMMAND"
+          ls -l /Library/Audio/Plug-Ins/HAL
+
+      - name: The device appears
+        run: |
+          for i in $(seq 1 30); do
+            if swift run -c release soundboardctl devices | grep -q iSoundboard_UID; then
+              swift run -c release soundboardctl devices
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "iSoundboard device never appeared" >&2
+          swift run -c release soundboardctl devices
+          exit 1
+
+      - name: A test tone passes through it
+        run: swift run -c release soundboardctl verify "iSoundboard" | tee verify.log && grep -q PASS verify.log
