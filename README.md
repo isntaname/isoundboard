@@ -56,6 +56,66 @@ and confirm.
 the virtual microphone your game records from. Sound cuts out for a second
 while macOS loads it.
 
+<details>
+<summary><b>About the audio driver: what it is and what installing it does</b></summary>
+
+<br>
+
+**What it is.** A virtual audio device named **iSoundboard**, with 2 inputs
+and 2 outputs. iSoundboard plays into it, and your game records from it. It
+is [BlackHole](https://github.com/ExistentialAudio/BlackHole), the
+open-source driver by Existential Audio, built from source under our own
+name. The source is in [`Driver/BlackHole`](Driver/BlackHole), unmodified;
+what the build changes is listed in [`Driver/README.md`](Driver/README.md).
+
+**Where it goes.** `/Library/Audio/Plug-Ins/HAL/iSoundboard.driver`. macOS's
+audio service loads every driver in that folder, so the device shows up for
+all apps and all users on the Mac.
+
+**Why it needs your password.** That folder belongs to the system; only an
+administrator can write to it. The app asks once, through the standard macOS
+password prompt.
+
+**What Install does**, in order:
+
+1. Copies the driver out of the app into a temporary folder only the system
+   can write to.
+2. Checks its signature: it has to be iSoundboard's driver, signed by the
+   same developer as the app you're running. If anything else was put in its
+   place, the install stops and your current driver stays.
+3. Removes the "downloaded from the internet" flag, and hands the files to the
+   system.
+4. Replaces any previous copy, then restarts the macOS audio service. That
+   restart is the one-second sound dropout.
+
+**Updates.** When a new version of iSoundboard carries a newer driver,
+Settings shows **Update Audio Driver**. It runs the same steps.
+
+**Already using BlackHole 2ch?** iSoundboard works with it and won't ask you to
+switch. You can still install ours from Settings; the two run side by side.
+
+**Checking it's installed.** Open **Audio MIDI Setup** and look for
+*iSoundboard*, or run:
+
+```bash
+ls /Library/Audio/Plug-Ins/HAL/
+/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' \
+  /Library/Audio/Plug-Ins/HAL/iSoundboard.driver/Contents/Info.plist
+```
+
+**Removing it without the app:**
+
+```bash
+sudo rm -rf /Library/Audio/Plug-Ins/HAL/iSoundboard.driver
+sudo killall coreaudiod
+```
+
+**The device doesn't appear after installing.** Restart your Mac. If it is
+still missing while the file is in the folder above, open an issue with your
+macOS version.
+
+</details>
+
 **4. Grant permissions.** iSoundboard opens on its Settings tab and lists what
 it's missing.
 
@@ -133,7 +193,7 @@ through the voice chat you send it to.
 
 ## Build from source
 
-Requires Xcode 16 or later.
+Requires Xcode 16 or later (the full app, for the driver).
 
 ```bash
 git clone https://github.com/isntaname/isoundboard.git
@@ -147,6 +207,51 @@ Always start the app with `open`. A binary launched from a terminal borrows the
 terminal's permissions and misreports its own. Permissions are tied to the
 code signature. The script signs with your Apple Development certificate if
 it finds one, so grants survive rebuilds.
+
+<details>
+<summary><b>Building the audio driver</b></summary>
+
+<br>
+
+`build-app.sh` builds the driver with
+[`Driver/build-driver.sh`](Driver/build-driver.sh) and puts it inside the app
+at `iSoundboard.app/Contents/Library/Driver/`. The build is skipped when
+nothing changed. To build only the driver:
+
+```bash
+./Driver/build-driver.sh      # -> build/driver/iSoundboard.driver
+```
+
+**Requires full Xcode**, not just the command line tools: the driver is an
+Xcode project.
+
+**What the script changes**, in a temporary copy of the source:
+
+- Name, device name and manufacturer become *iSoundboard*. The bundle id
+  becomes `io.github.isntaname.isoundboard.driver`, and the icon is ours.
+  BlackHole's license asks third-party builds to rename.
+- 2 channels.
+- Two names hard-coded in `BlackHole.c` are pointed at ours. The script
+  stops with an error if a future BlackHole changes those lines.
+- The version becomes BlackHole's version plus `DRIVER_REVISION`, e.g.
+  `0.7.1.2`. **Bump `DRIVER_REVISION` whenever you change how the driver is
+  built.** The app offers Update Audio Driver only when the version differs.
+
+**Signing.** The app installs only a driver signed by the same developer team
+as the app itself. `build-app.sh` signs both with your Apple Development
+certificate if it finds one. A free Apple ID gives you one: in Xcode, open
+**Settings → Accounts**, sign in, and create an *Apple Development*
+certificate. Without a certificate both are signed ad-hoc and the install
+checks only the bundle id. Whether macOS loads an ad-hoc-signed driver hasn't
+been tested.
+
+**Installing your build.** Run `./build-app.sh --install`, open the app and use
+the button in Settings. It installs the driver from the app you built.
+
+**Updating BlackHole.** Replace `Driver/BlackHole` with the new release and
+set `DRIVER_REVISION` back to 1.
+
+</details>
 
 [`docs/audio-findings.md`](docs/audio-findings.md) and
 [`docs/permissions-findings.md`](docs/permissions-findings.md) record the
