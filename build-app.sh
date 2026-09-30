@@ -94,7 +94,7 @@ IDENTITY="${SOUNDBOARD_SIGN_IDENTITY:-}"
 if [ -z "$IDENTITY" ]; then
     DETECTED=$(security find-identity -v -p codesigning 2>/dev/null \
         | grep -oE '"(Apple Development|Developer ID Application|Mac Developer): [^"]+"' \
-        | head -1 | tr -d '"')
+        | head -1 | tr -d '"' || true)  # no certificate (e.g. CI): fall back to ad-hoc
     if [ -n "$DETECTED" ]; then
         IDENTITY="$DETECTED"
         echo "signing with detected identity: $IDENTITY"
